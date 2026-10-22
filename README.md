@@ -110,6 +110,6 @@ No Asset Store content. Everything is original except:
 
 ## About this repository
 
-This public repository is a **showcase**. It contains the documentation and the **79 source files I wrote** for this project. The complete Unity project, with the store-page material and the Steam setup, is kept in a private repository.
+This public repository is a **showcase**. It contains the documentation and the **82 source files I wrote** for this project. The complete Unity project, with the store-page material and the Steam setup, is kept in a private repository.
 
 Copyright © Omer Avcioglu (McHunter Studio). **All rights reserved.** Viewing only; see [LICENSE](LICENSE).

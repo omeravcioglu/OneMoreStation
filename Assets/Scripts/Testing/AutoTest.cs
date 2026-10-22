@@ -91,6 +91,7 @@ namespace Metro
             else if (scenario == "hall") yield return HallTest(g);
             else if (scenario == "challenge") yield return ChallengeTest(g);
             else if (scenario == "ui") yield return UiTest(g);
+            else if (scenario == "demo") yield return DemoTest(g);
             else if (scenario == "trailer") yield return TrailerTest(g);
             Note("done");
             Application.logMessageReceived -= OnLog;

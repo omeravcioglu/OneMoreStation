@@ -293,6 +293,23 @@ namespace Metro.Platform
             try { SteamFriends.ClearRichPresence(); }
             catch (Exception) { }
         }
+
+        // ------------------------------------------------------------------ store
+
+        public bool OpenStorePage(uint appId)
+        {
+            if (!alive) return false;
+            try
+            {
+                if (!SteamUtils.IsOverlayEnabled()) return false;
+                SteamFriends.ActivateGameOverlayToStore(new AppId_t(appId), EOverlayToStoreFlag.k_EOverlayToStoreFlag_None);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 #else
     /// <summary>Steamworks isn't available on this platform: always offline.</summary>

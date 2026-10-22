@@ -649,7 +649,8 @@ namespace Metro.UI
                 growSig = sig;
                 growList.Clear();
                 growRows.Clear();
-                if (p.Next != null) growHead.text = "GROW INTO A " + p.Next.name.ToUpperInvariant();
+                if (p.AtDemoEnd) growHead.text = "DEMO FINALE: GROW INTO A " + p.Next.name.ToUpperInvariant();
+                else if (p.Next != null) growHead.text = "GROW INTO A " + p.Next.name.ToUpperInvariant();
                 else
                 {
                     growHead.text = p.Current.name.ToUpperInvariant();
@@ -701,8 +702,11 @@ namespace Metro.UI
                 {
                     int m = Mathf.FloorToInt(gs.clock.MinuteOfDay);
                     int until = m < Balance.NightEnd ? Balance.NightEnd - m : Balance.MinutesPerDay - m + Balance.NightEnd;
-                    blurb = $"All goals met! {gs.city.name} grows into a {p.Next.name} at dawn (in ~{Mathf.Max(1, Mathf.CeilToInt(until / 60f))}h).";
+                    blurb = p.AtDemoEnd
+                        ? $"All goals met! The demo ends at dawn (in ~{Mathf.Max(1, Mathf.CeilToInt(until / 60f))}h)."
+                        : $"All goals met! {gs.city.name} grows into a {p.Next.name} at dawn (in ~{Mathf.Max(1, Mathf.CeilToInt(until / 60f))}h).";
                 }
+                else if (p.AtDemoEnd) blurb = "The last goals of the demo. Meet them all and the demo ends at the next dawn.";
                 else blurb = "Unlocks " + UnlockSummary(p.Next) + $". Meet every goal and the {(p.tier <= 2 ? "town" : "city")} grows overnight.";
                 if (growBlurb.text != blurb) growBlurb.text = blurb;
                 growBlurb.EnableInClassList("good", ready);

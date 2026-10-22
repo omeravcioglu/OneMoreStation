@@ -88,7 +88,35 @@ namespace Metro.EditorTools
             if (Application.isBatchMode) EditorApplication.Exit(ok ? 0 : 1);
         }
 
-        static BuildReport Build(string outDir, BuildOptions extra)
+        [MenuItem("Metro/Build Demo (Steam)")]
+        public static void BuildDemoMenu() => BuildDemo();
+
+        /// <summary>
+        /// The free demo: the release build with METRO_DEMO defined (first two city sizes, guided start,
+        /// "End of the demo" card), named "One More Station Demo" so its saves live in their own folder.
+        /// Lands in Builds/Demo/&lt;version&gt;/ and is checked like the release.
+        /// </summary>
+        public static void BuildDemo()
+        {
+            ApplyPlayerSettings();
+            PlayerSettings.productName = "One More Station Demo";
+            string outDir = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Builds", "Demo", Version));
+            if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
+            BuildReport report;
+            try
+            {
+                report = Build(outDir, BuildOptions.CleanBuildCache, new[] { "METRO_DEMO" });
+            }
+            finally
+            {
+                ApplyPlayerSettings();
+            }
+            bool ok = report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded;
+            if (ok) ok = VerifyRelease(outDir);
+            if (Application.isBatchMode) EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        static BuildReport Build(string outDir, BuildOptions extra, string[] defines = null)
         {
             Directory.CreateDirectory(outDir);
             var options = new BuildPlayerOptions
@@ -96,7 +124,8 @@ namespace Metro.EditorTools
                 scenes = new[] { ScenePath },
                 locationPathName = Path.Combine(outDir, ExeName),
                 target = BuildTarget.StandaloneWindows64,
-                options = extra
+                options = extra,
+                extraScriptingDefines = defines
             };
             var report = BuildPipeline.BuildPlayer(options);
             Debug.Log($"[Metro] Build {report.summary.result}: {report.summary.totalErrors} errors, {report.summary.totalSize / (1024 * 1024)} MB, {report.summary.totalTime} -> {outDir}");

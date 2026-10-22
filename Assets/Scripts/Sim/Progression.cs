@@ -119,6 +119,14 @@ namespace Metro
         public bool Growing { get; private set; }
         public event Action<TierReachedInfo> TierReached;
 
+        /// <summary>Demo only: the demo is over. True when the play-time cap ended it, false when the town finished it.</summary>
+        public event Action<bool> DemoFinished;
+        /// <summary>Demo only: set by the game once the play-time cap is reached; the demo ends that evening.</summary>
+        public bool demoTimeUp;
+        public bool DemoOver { get; private set; }
+        /// <summary>Demo only: the town has reached the demo's last size, so it won't grow any further.</summary>
+        public bool AtDemoEnd => Demo.On && tier >= Demo.LastTier;
+
         public ProgressionSystem(GameState gs)
         {
             this.gs = gs;
@@ -282,8 +290,23 @@ namespace Metro
             bestRidersThisTier = Mathf.Max(bestRidersThisTier, gs.stats.ridersToday);
             int minute = Mathf.RoundToInt(gs.clock.MinuteOfDay) % Balance.MinutesPerDay;
             if (minute % 5 == 0) Evaluate();
+            if (Demo.On && !DemoOver && CheckDemoEnd(minute)) return;
             // Growth happens overnight: at most one size per day, and never in the middle of a rush.
-            if (minute == Balance.NightEnd && Ready && !holdTierUps) TierUp();
+            if (minute == Balance.NightEnd && Ready && !holdTierUps && !AtDemoEnd) TierUp();
+        }
+
+        /// <summary>
+        /// Demo: the town that is ready to leave the demo's last size ends the demo at dawn, instead of
+        /// growing. After the play-time cap, the demo ends once the evening rush is over.
+        /// </summary>
+        bool CheckDemoEnd(int minute)
+        {
+            bool finished = minute == Balance.NightEnd && Ready && AtDemoEnd && !holdTierUps;
+            bool timeUp = demoTimeUp && (minute >= Demo.EveningMinute || minute < Balance.NightEnd);
+            if (!finished && !timeUp) return false;
+            DemoOver = true;
+            DemoFinished?.Invoke(!finished);
+            return true;
         }
 
         /// <summary>Day-end goals are judged on the day that just closed.</summary>
@@ -414,7 +437,9 @@ namespace Metro
             if (Ready && !announcedReady)
             {
                 announcedReady = true;
-                gs.advisor.Post(MsgCategory.City, MsgSeverity.Good, $"Every goal is met! {gs.city.name} will grow into a {Next.name} at dawn.");
+                gs.advisor.Post(MsgCategory.City, MsgSeverity.Good, AtDemoEnd
+                    ? $"Every goal is met! {gs.city.name} is ready to become a {Next.name}. That's the end of the demo, at dawn."
+                    : $"Every goal is met! {gs.city.name} will grow into a {Next.name} at dawn.");
             }
         }
 

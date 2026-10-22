@@ -395,7 +395,8 @@ namespace Metro
             steps.Add(new Step
             {
                 title = $"Grow {town}",
-                body = $"The *sticky note* at the top left shows what it takes for {town} to grow into a {ProgressionSystem.Tiers[1].name}: a bigger map, a second line and new tools. Meet every goal and the town grows overnight, ready for the next morning.\n\nFrom here on you're in charge. Every time the town grows, a card explains what's new.",
+                body = $"The *sticky note* at the top left shows what it takes for {town} to grow into a {ProgressionSystem.Tiers[1].name}: a bigger map, a second line and new tools. Meet every goal and the town grows overnight, ready for the next morning.\n\nFrom here on you're in charge. Every time the town grows, a card explains what's new." +
+                    (Demo.On ? $"\n\n*This demo* covers the first two sizes. It ends when {town} is ready to become a {ProgressionSystem.Tiers[Demo.LastTier + 1].name}, in about 15–20 minutes. Speed up time with {Keybinds.Label(BindAction.Speed2)} and {Keybinds.Label(BindAction.Speed3)}." : ""),
                 highlight = "goals",
                 manual = true,
                 nextLabel = "Got it"

@@ -189,6 +189,7 @@ namespace Metro
                 State.DistrictRevealed -= OnDistrictRevealed;
                 State.advisor.Posted -= OnMessage;
                 State.progress.TierReached -= OnTierReached;
+                State.progress.DemoFinished -= OnDemoFinished;
                 State.gov.SessionHeld -= OnSessionHeld;
                 State.gov.LicenceRevoked -= OnLicenceRevoked;
                 State.gov.BailoutGranted -= OnBailout;
@@ -208,10 +209,12 @@ namespace Metro
             gs.DistrictRevealed += OnDistrictRevealed;
             gs.advisor.Posted += OnMessage;
             gs.progress.TierReached += OnTierReached;
+            gs.progress.DemoFinished += OnDemoFinished;
             gs.gov.SessionHeld += OnSessionHeld;
             gs.gov.LicenceRevoked += OnLicenceRevoked;
             gs.gov.BailoutGranted += OnBailout;
             lastAutosaveDay = gs.clock.Day;
+            demoPlaySeconds = 0f;
             gs.EnsureFresh();
             gs.trains.RefreshAllPoses();
         }
@@ -366,6 +369,38 @@ namespace Metro
                 Paused = pausedBeforeTierUp;
                 UI.PulseUnlocks(ProgressionSystem.Tiers[info.tier].unlocks);
             }));
+        }
+
+        // ------------------------------------------------------------------ demo
+
+        /// <summary>Unpaused real seconds played in this town since it was started or loaded (demo builds).</summary>
+        float demoPlaySeconds;
+
+        /// <summary>The demo's town: the guided start in Port Avalon, or a fresh town without the guide.</summary>
+        public void StartDemoGame(bool guided)
+        {
+            int seed = guided ? Demo.StartSeed : UnityEngine.Random.Range(1, 99999);
+            // A guide still running from another town must not carry over.
+            UI.tutorial.Hide();
+            Tutorial = new TutorialController(this);
+            StartNewGame(new NewGameOptions
+            {
+                seed = seed,
+                cityName = guided ? Demo.StartCity : NameBank.RandomCityName(new Rng(seed)),
+                difficulty = 0,
+                tutorial = guided
+            });
+        }
+
+        void OnDemoFinished(bool timeUp)
+        {
+            if (Mode != AppMode.Playing) return;
+            SkippingToDawn = false;
+            Paused = true;
+            Tools.Select(ToolKind.Select);
+            ClearSelection();
+            Sfx.Reveal();
+            UI.ShowWhenFree(() => UI.ShowDemoEnd(timeUp));
         }
 
         // ------------------------------------------------------------------ City Hall
@@ -687,6 +722,11 @@ namespace Metro
                         if (State.clock.totalMinutes >= skipUntil - 1e-4) SkippingToDawn = false;
                     }
                     else State.Advance(dt * Balance.MinutesPerRealSecond * mult);
+                    if (Demo.On && State.challenge == null && !State.progress.DemoOver)
+                    {
+                        demoPlaySeconds += dt;
+                        if (demoPlaySeconds >= Demo.PlayCapSeconds) State.progress.demoTimeUp = true;
+                    }
                 }
                 if (!UI.ModalOpen && !UI.WindowOpen) Tools.Tick(dt, overUI);
                 else uiRoot.HideCursorHint();

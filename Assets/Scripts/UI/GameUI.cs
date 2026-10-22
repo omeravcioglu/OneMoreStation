@@ -577,7 +577,7 @@ namespace Metro.UI
             B(col, "Settings", IconKind.Gear, ShowSettings);
             var pair = UIK.Row(col, "pause-pair");
             B(pair, "Help", IconKind.Info, ShowHelp).AddToClassList("pause-btn-narrow");
-            B(pair, "Achievements", IconKind.Trophy, ShowAchievements).AddToClassList("pause-btn-wide");
+            if (!Demo.On) B(pair, "Achievements", IconKind.Trophy, ShowAchievements).AddToClassList("pause-btn-wide");
             var dash = new Squiggle(Doodle.Sand, 3f);
             dash.style.flexGrow = 1f;
             UIK.Div(p, "pause-dash").Add(dash);
@@ -899,27 +899,31 @@ namespace Metro.UI
 
             var nav = UIK.Col(card, "menu-nav");
             var auto = SaveSystem.Info(SaveSystem.AutosaveSlot);
-            if (auto.exists)
-                MenuButton(nav, IconKind.Play, "Continue", $"{auto.city} · Day {auto.day}", Doodle.Mint, 0, () => g.LoadGame(SaveSystem.AutosaveSlot));
-            var hero = MenuButton(nav, IconKind.City, "New city", "Start small, grow a metropolis", Doodle.Sun, 1, () => g.UI.ShowNewGame(!auto.exists));
-            hero.AddToClassList("menu-btn-hero");
-            var arrow = new CurlyArrow();
-            arrow.AddToClassList("menu-hero-arrow");
-            hero.Add(arrow);
-            MenuButton(nav, IconKind.Info, "Tutorial", "A guided first city", Doodle.Sky, 2, () => g.UI.ShowNewGame(true));
-            MenuButton(nav, IconKind.Folder, "Load game", "Four slots, incl. the autosave", Doodle.Gum, 3, () => g.UI.ShowSaveLoad(false));
-            var pair = UIK.Row(nav, "menu-pair");
-            var ch = MenuButton(pair, IconKind.Faster, "Challenges", null, Doodle.SkyL, 0, () => g.UI.ShowChallenges(), true);
-            Chip(ch, Metro.Challenges.MenuSummary().Replace(" of ", "/").Replace(" stars", ""), IconKind.Star);
-            UIK.Tooltip(ch, () => "Short puzzles with a goal and a clock: " + Metro.Challenges.MenuSummary() + ".");
-            var ach = MenuButton(pair, IconKind.Trophy, "Achievements", null, Doodle.Tang, 1, () => g.UI.ShowAchievements(), true);
-            Chip(ach, $"{Metro.Platform.Achievements.UnlockedCount}/{Metro.Platform.Achievements.All.Length}", null);
-            var pair2 = UIK.Row(nav, "menu-pair");
-            MenuButton(pair2, IconKind.Gear, "Settings", null, Doodle.GrapeL, 2, () => g.UI.ShowSettings(), true);
-            MenuButton(pair2, IconKind.Star, "Credits", null, Doodle.Paper, 3, () => g.UI.ShowCredits(), true);
-            MenuButton(pair2, IconKind.Door, "Quit", null, Doodle.TomatoL, 0, () => g.Quit(), true).AddToClassList("menu-btn-quit");
+            if (Demo.On) BuildDemoNav(nav, auto);
+            else
+            {
+                if (auto.exists)
+                    MenuButton(nav, IconKind.Play, "Continue", $"{auto.city} · Day {auto.day}", Doodle.Mint, 0, () => g.LoadGame(SaveSystem.AutosaveSlot));
+                var hero = MenuButton(nav, IconKind.City, "New city", "Start small, grow a metropolis", Doodle.Sun, 1, () => g.UI.ShowNewGame(!auto.exists));
+                hero.AddToClassList("menu-btn-hero");
+                var arrow = new CurlyArrow();
+                arrow.AddToClassList("menu-hero-arrow");
+                hero.Add(arrow);
+                MenuButton(nav, IconKind.Info, "Tutorial", "A guided first city", Doodle.Sky, 2, () => g.UI.ShowNewGame(true));
+                MenuButton(nav, IconKind.Folder, "Load game", "Four slots, incl. the autosave", Doodle.Gum, 3, () => g.UI.ShowSaveLoad(false));
+                var pair = UIK.Row(nav, "menu-pair");
+                var ch = MenuButton(pair, IconKind.Faster, "Challenges", null, Doodle.SkyL, 0, () => g.UI.ShowChallenges(), true);
+                Chip(ch, Metro.Challenges.MenuSummary().Replace(" of ", "/").Replace(" stars", ""), IconKind.Star);
+                UIK.Tooltip(ch, () => "Short puzzles with a goal and a clock: " + Metro.Challenges.MenuSummary() + ".");
+                var ach = MenuButton(pair, IconKind.Trophy, "Achievements", null, Doodle.Tang, 1, () => g.UI.ShowAchievements(), true);
+                Chip(ach, $"{Metro.Platform.Achievements.UnlockedCount}/{Metro.Platform.Achievements.All.Length}", null);
+                var pair2 = UIK.Row(nav, "menu-pair");
+                MenuButton(pair2, IconKind.Gear, "Settings", null, Doodle.GrapeL, 2, () => g.UI.ShowSettings(), true);
+                MenuButton(pair2, IconKind.Star, "Credits", null, Doodle.Paper, 3, () => g.UI.ShowCredits(), true);
+                MenuButton(pair2, IconKind.Door, "Quit", null, Doodle.TomatoL, 0, () => g.Quit(), true).AddToClassList("menu-btn-quit");
+            }
             string player = Metro.Platform.PlatformServices.Current.PlayerName;
-            UIK.Text(card, $"Version {Application.version} · {Metro.Platform.PlatformServices.Status}{(string.IsNullOrEmpty(player) ? "" : " · " + player)}", "menu-footer");
+            UIK.Text(card, $"{(Demo.On ? "Demo · " : "")}Version {Application.version} · {Metro.Platform.PlatformServices.Status}{(string.IsNullOrEmpty(player) ? "" : " · " + player)}", "menu-footer");
 
             // The mascot peeks out from behind the card and says hello.
             var buddy = UIK.Div(root, "menu-mascot");
@@ -934,11 +938,33 @@ namespace Metro.UI
             mascotBob.Add(mascot);
             NoPick(buddy);
 
-            demoSticker = new Starburst(132f, "LIVE\nDEMO\nCITY!");
+            demoSticker = new Starburst(132f, Demo.On ? "FREE\nDEMO!" : "LIVE\nDEMO\nCITY!");
             ((Starburst)demoSticker).Fill = Doodle.Sky;
             ((Starburst)demoSticker).label.AddToClassList("menu-demo-text");
             demoSticker.AddToClassList("menu-demo");
             root.Add(demoSticker);
+        }
+
+        /// <summary>The demo's menu: the guided town first, then free play, help and the wishlist button.</summary>
+        void BuildDemoNav(VisualElement nav, SlotInfo auto)
+        {
+            if (auto.exists)
+                MenuButton(nav, IconKind.Play, "Continue", $"{auto.city} · Day {auto.day}", Doodle.Mint, 0, () => g.LoadGame(SaveSystem.AutosaveSlot));
+            var hero = MenuButton(nav, IconKind.Info, "Play the demo", "A guided first town · about 20 minutes", Doodle.Sun, 1, () => g.StartDemoGame(true));
+            hero.AddToClassList("menu-btn-hero");
+            hero.name = "demo-play";
+            var arrow = new CurlyArrow();
+            arrow.AddToClassList("menu-hero-arrow");
+            hero.Add(arrow);
+            MenuButton(nav, IconKind.City, "Free play", "A new town, no guide", Doodle.Sky, 2, () => g.StartDemoGame(false));
+            MenuButton(nav, IconKind.Folder, "Load game", "Four slots, incl. the autosave", Doodle.Gum, 3, () => g.UI.ShowSaveLoad(false));
+            var pair = UIK.Row(nav, "menu-pair");
+            MenuButton(pair, IconKind.Info, "How to play", null, Doodle.SkyL, 0, () => g.UI.ShowHelp(), true);
+            MenuButton(pair, IconKind.Star, "Wishlist", null, Doodle.Tang, 1, Metro.Platform.PlatformServices.OpenFullGameStorePage, true).name = "demo-menu-wishlist";
+            var pair2 = UIK.Row(nav, "menu-pair");
+            MenuButton(pair2, IconKind.Gear, "Settings", null, Doodle.GrapeL, 2, () => g.UI.ShowSettings(), true);
+            MenuButton(pair2, IconKind.Star, "Credits", null, Doodle.Paper, 3, () => g.UI.ShowCredits(), true);
+            MenuButton(pair2, IconKind.Door, "Quit", null, Doodle.TomatoL, 0, () => g.Quit(), true).AddToClassList("menu-btn-quit");
         }
 
         static void NoPick(VisualElement e)
