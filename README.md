@@ -4,6 +4,8 @@
 
 Every game starts as a small town with one line. Meeting the town's goals grows it overnight: the procedurally generated map opens up, new districts appear and new mechanics unlock, up to a 48-district metropolis. From Market town on, City Hall wants things from you.
 
+**[Coming soon on Steam](https://store.steampowered.com/app/5383480/One_More_Station/)**: wishlist it there.
+
 | | |
 |---|---|
 | ![Main menu over a live demo city](Docs/screenshots/main-menu.png) | ![Rush hour close-up with the manager's feed](Docs/screenshots/rush-hour-closeup.png) |
@@ -43,8 +45,10 @@ Every game starts as a small town with one line. Meeting the town's goals grows 
   - 32 achievements, colour-blind friendly crowding colours and rebindable controls.
 
 **Status:** version 1.0.0, built for Steam (achievements and stats, Steam Cloud saves, rich presence, the overlay), with full offline play.
-- The Steam store page is filled in on Steamworks but not published yet.
-- The store art and a trailer (`Steam/store/trailer/trailer.py`) are made.
+- The [Steam store page](https://store.steampowered.com/app/5383480/One_More_Station/) is live as **Coming soon**, with its art and a trailer (`Steam/store/trailer/trailer.py`).
+- **A free demo** is built from the same code: the guided start in Port Avalon, through the first two city sizes (Small town and Growing town).
+  - At the dawn the town would become a Market town, an "End of the demo" card appears with a Wishlist button. A slow first session still gets there: after 20 minutes of unpaused play, the demo ends that evening, once the rush is over.
+  - It plays on Relaxed, without Challenges or Achievements, and keeps its saves apart from the full game's.
 
 ## Tech stack
 
@@ -56,17 +60,18 @@ Every game starts as a small town with one line. Meeting the town's goals grows 
 | UI | **UI Toolkit** screens built from code: HUD, feed, inspector, windows, menus, tutorial, map labels |
 | Audio | A **generative ambient soundtrack synthesized live** (pad, bass, plucks, delay) that follows the time of day; no audio files |
 | Platform | **Steamworks.NET**: achievements and stats, Steam Cloud, rich presence, the overlay; offline fallback |
+| Editions | One codebase builds the full game and the free demo (`METRO_DEMO`). Any build started with `-demo` plays as the demo, which is how the bots test it. |
 | Saving | 4 slots, a daily autosave and a save on quit, crash-safe writes with a backup |
-| Testing | Headless batch-mode bots that play whole games, every challenge and long simulations; a fuzzer; scripted runs that take screenshots |
+| Testing | Headless batch-mode bots that play whole games, every challenge, the demo to its end card and long simulations; a fuzzer; scripted runs that take screenshots |
 | Store art | Python tools that generate the Steam capsules, banners and icons |
 
 ## What I built
 
-All of it. The game code is **`Assets/Scripts/`**: 73 C# scripts, about 29k lines.
+All of it. The game code is **`Assets/Scripts/`** plus the editor tools in `Assets/Editor/`: 76 C# scripts, about 29k lines.
 
 | Area | Contents |
 |---|---|
-| `Core/` | The frame loop, selection, hotkeys, challenges and undo; `GameState` with all systems and their ticks; `Balance`; the clock; saving |
+| `Core/` | The frame loop, selection, hotkeys, challenges and undo; `GameState` with all systems and their ticks; `Balance`; the clock; saving; `Demo`, the free demo's rules |
 | `City/` | Seeded `CityGenerator` (coast, rivers, lakes, parks, Voronoi districts), `CityModel`, water, names, `CityGrowth` |
 | `Network/` | Stations, lines, track and depots; octilinear geometry and train kinematics. `ConstructionService` handles every validated, paid change, and records it for undo |
 | `Sim/` | `Progression`, `Government` (City Hall), `Challenges`, `RoutingSystem`, `DemandModel`, `PassengerSystem`, `TrainSystem`, `Economy`, satisfaction |
@@ -88,6 +93,7 @@ All of it. The game code is **`Assets/Scripts/`**: 73 C# scripts, about 29k line
 - **Headless bots** (`MetroHeadless`):
   - one plays a normal game from Small town and logs every growth step, City Hall request, election and day;
   - another plays every challenge twice, once doing nothing (it must fail) and once properly (it must earn a star);
+  - a third plays the demo build's flow: its menu, the guided start, the stop at the last demo size with "End of the demo" at dawn, and the play-time cap;
   - calibration modes produce the numbers that set the goals.
 
 ## Scenes
@@ -105,7 +111,7 @@ No Asset Store content. Everything is original except:
 ## Docs
 
 - [`PROJECT_README.md`](PROJECT_README.md): the project's own notes, covering controls, the learning curve, City Hall, challenges, the full feature list, code layout, testing and known limitations
-- `Docs/STEAM.md` and `Docs/RELEASE_CHECKLIST.md`: Steam setup and the release checklist
+- `Docs/STEAM.md` and `Docs/RELEASE_CHECKLIST.md`: Steam setup, the free demo and the release checklist
 - `Steam/store/STORE_PAGE.md`: the store page and its assets
 
 ## About this repository
