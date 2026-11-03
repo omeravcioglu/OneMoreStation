@@ -46,6 +46,7 @@ Every game starts as a small town with one line. Meeting the town's goals grows 
 
 **Status:** version 1.0.0, built for Steam (achievements and stats, Steam Cloud saves, rich presence, the overlay), with full offline play.
 - The [Steam store page](https://store.steampowered.com/app/5383480/One_More_Station/) is live as **Coming soon**, with its art and a trailer (`Steam/store/trailer/trailer.py`).
+- **Trailer v2** (71 s) is cut on the beat of "Next Stop", an original theme composed and synthesized in Python (marimba, glockenspiel, a whistled lead, a station chime). The footage is recorded by the game itself, one exact frame at a time.
 - **A free demo** is built from the same code: the guided start in Port Avalon, through the first two city sizes (Small town and Growing town).
   - At the dawn the town would become a Market town, an "End of the demo" card appears with a Wishlist button. A slow first session still gets there: after 20 minutes of unpaused play, the demo ends that evening, once the rush is over.
   - It plays on Relaxed, without Challenges or Achievements, and keeps its saves apart from the full game's.
@@ -63,11 +64,11 @@ Every game starts as a small town with one line. Meeting the town's goals grows 
 | Editions | One codebase builds the full game and the free demo (`METRO_DEMO`). Any build started with `-demo` plays as the demo, which is how the bots test it. |
 | Saving | 4 slots, a daily autosave and a save on quit, crash-safe writes with a backup |
 | Testing | Headless batch-mode bots that play whole games, every challenge, the demo to its end card and long simulations; a fuzzer; scripted runs that take screenshots |
-| Store art | Python tools that generate the Steam capsules, banners and icons |
+| Store art and trailers | Python tools that generate the Steam capsules, banners and icons. For the trailer, the game records itself on a frame-exact clock (`UIClock`), and a Python edit lines the cuts up with the beats of a theme synthesized from scratch (numpy and scipy, no samples). |
 
 ## What I built
 
-All of it. The game code is **`Assets/Scripts/`** plus the editor tools in `Assets/Editor/`: 76 C# scripts, about 29k lines.
+All of it. The game code is **`Assets/Scripts/`** plus the editor tools in `Assets/Editor/`: 77 C# scripts, about 29k lines.
 
 | Area | Contents |
 |---|---|
@@ -77,7 +78,7 @@ All of it. The game code is **`Assets/Scripts/`** plus the editor tools in `Asse
 | `Sim/` | `Progression`, `Government` (City Hall), `Challenges`, `RoutingSystem`, `DemandModel`, `PassengerSystem`, `TrainSystem`, `Economy`, satisfaction |
 | `Platform/` | Steam or offline, achievements, the player profile, cloud sync |
 | `Render/`, `Tools/`, `UI/` | The vector renderer and camera, the build tools, and the UI Toolkit screens |
-| `Testing/` + `Assets/Editor/` | Scripted autotests; build scripts; app and achievement icon generators; the headless test entry points and fuzzer |
+| `Testing/` + `Assets/Editor/` | Scripted autotests, including the trailer capture (`AutoTest.Trailer`); build scripts; app and achievement icon generators; the headless test entry points and fuzzer |
 
 ### Code highlights
 
@@ -113,9 +114,10 @@ No Asset Store content. Everything is original except:
 - [`PROJECT_README.md`](PROJECT_README.md): the project's own notes, covering controls, the learning curve, City Hall, challenges, the full feature list, code layout, testing and known limitations
 - `Docs/STEAM.md` and `Docs/RELEASE_CHECKLIST.md`: Steam setup, the free demo and the release checklist
 - `Steam/store/STORE_PAGE.md`: the store page and its assets
+- `Steam/store/trailer/v2/README.md`: trailer v2: the music, the capture and the edit
 
 ## About this repository
 
-This public repository is a **showcase**. It contains the documentation and the **82 source files I wrote** for this project. The complete Unity project, with the store-page material and the Steam setup, is kept in a private repository.
+This public repository is a **showcase**. It contains the documentation and the **85 source files I wrote** for this project. The complete Unity project, with the store-page material and the Steam setup, is kept in a private repository.
 
 Copyright © Omer Avcioglu (McHunter Studio). **All rights reserved.** Viewing only; see [LICENSE](LICENSE).
