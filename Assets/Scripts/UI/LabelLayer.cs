@@ -191,7 +191,7 @@ namespace Metro.UI
             float size = g.CamCtl.Size;
             Vector2 pos = g.CamCtl.Position;
             int sel = g.Sel.kind == SelKind.Station || g.Sel.kind == SelKind.Line ? (int)g.Sel.kind * 100000 + g.Sel.id : -1;
-            timer -= Time.unscaledDeltaTime;
+            timer -= UIClock.Delta;
             float pw = g.CamCtl.PixelWorldSize;
             float scale = ui.PanelScale;
             float panPx = (pos - lastPos).magnitude / Mathf.Max(pw, 1e-6f) * scale;

@@ -649,7 +649,7 @@ namespace Metro
             if (hasCursor && hasPrev)
             {
                 var path = LineGeometry.OctilinearPath(prev, cursorStop.pos, cursorStop.diagonalFirst);
-                float march = Time.unscaledTime / 0.8f * 18f * refPx;
+                float march = UIClock.Now / 0.8f * 18f * refPx;
                 b.AddDashed(path, StrokeWidth.Pixels(2f), cursorValid ? ink : MapPalette.Invalid, 10f * refPx, 8f * refPx, 1f, 0f, -march);
             }
             foreach (var s in stops)

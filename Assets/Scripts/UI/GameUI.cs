@@ -323,7 +323,7 @@ namespace Metro.UI
             p.Add(burst);
             jump.schedule.Execute(() =>
             {
-                float t = Time.unscaledTime;
+                float t = UIClock.Now;
                 jump.style.translate = new Translate(0f, -Mathf.Abs(Mathf.Sin(t * 3.2f)) * 16f);
                 jump.Wave = Mathf.Sin(t * 6f) * 18f;
                 burst.style.rotate = new Rotate(12f + Mathf.Sin(t * 2.2f) * 4f);
@@ -345,7 +345,7 @@ namespace Metro.UI
                     var sticker = UIK.Text(e, "new!", "new-sticker");
                     sticker.pickingMode = PickingMode.Ignore;
                     UIK.Display(sticker);
-                    pulses.Add((e, sticker, Time.unscaledTime + 9f));
+                    pulses.Add((e, sticker, UIClock.Now + 9f));
                 }
             }
         }
@@ -355,7 +355,7 @@ namespace Metro.UI
             for (int i = pulses.Count - 1; i >= 0; i--)
             {
                 var (e, sticker, until) = pulses[i];
-                if (Time.unscaledTime > until)
+                if (UIClock.Now > until)
                 {
                     e.RemoveFromClassList("tut-highlight");
                     e.style.borderTopColor = e.style.borderBottomColor = e.style.borderLeftColor = e.style.borderRightColor = StyleKeyword.Null;
@@ -363,10 +363,10 @@ namespace Metro.UI
                     pulses.RemoveAt(i);
                     continue;
                 }
-                float a = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 5f);
+                float a = 0.5f + 0.5f * Mathf.Sin(UIClock.Now * 5f);
                 var c = new Color(GrowOrange.r, GrowOrange.g, GrowOrange.b, 0.35f + 0.65f * a);
                 e.style.borderTopColor = e.style.borderBottomColor = e.style.borderLeftColor = e.style.borderRightColor = c;
-                sticker.style.rotate = new Rotate(12f + Mathf.Sin(Time.unscaledTime * 6f) * 6f);
+                sticker.style.rotate = new Rotate(12f + Mathf.Sin(UIClock.Now * 6f) * 6f);
             }
         }
 
@@ -1012,7 +1012,7 @@ namespace Metro.UI
 
         public void Tick(float dt)
         {
-            float t = Time.unscaledTime;
+            float t = UIClock.Now;
             mascotBob.style.translate = new Translate(0f, -3f - 3f * Mathf.Sin(t * Mathf.PI));
             mascot.Wave = Mathf.Lerp(-8f, 14f, 0.5f + 0.5f * Mathf.Sin(t * 2f * Mathf.PI / 1.4f));
             demoSticker.style.rotate = new Rotate(-10f + Mathf.Sin(t * 1.3f) * 2f);

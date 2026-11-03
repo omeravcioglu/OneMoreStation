@@ -165,7 +165,7 @@ namespace Metro.UI
             UIK.Show(root, !g.HideHudForTutorial);
             var city = gs.city;
 
-            texTimer -= Time.unscaledDeltaTime;
+            texTimer -= UIClock.Delta;
             int revealed = 0;
             foreach (var d in city.districts)
                 if (d.revealed) revealed++;

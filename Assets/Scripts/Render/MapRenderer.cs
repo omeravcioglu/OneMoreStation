@@ -574,8 +574,8 @@ namespace Metro
                 for (int k = 0; k < 5; k++)
                 {
                     float ang = k * 1.2566f + d.id;
-                    Vector2 at = d.labelPos + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * (0.6f + 0.35f * Mathf.Sin(Time.time * 2f + k)) ;
-                    float size = (10f + 6f * Mathf.Sin(Time.time * 5f + k * 1.7f)) * refPx * a;
+                    Vector2 at = d.labelPos + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * (0.6f + 0.35f * Mathf.Sin(UIClock.Now * 2f + k)) ;
+                    float size = (10f + 6f * Mathf.Sin(UIClock.Now * 5f + k * 1.7f)) * refPx * a;
                     Sparkle(growFx.b, at, size, refPx, MapPalette.WithAlpha(MapPalette.Highlighter, a), MapPalette.WithAlpha(MapPalette.Ink, a));
                 }
             }

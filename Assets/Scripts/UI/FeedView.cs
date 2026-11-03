@@ -164,7 +164,7 @@ namespace Metro.UI
                 badge.EnableInClassList("feed-badge-hot", hot);
                 if (!hot) badge.style.rotate = StyleKeyword.Null;
             }
-            float t = Time.unscaledTime;
+            float t = UIClock.Now;
             // An unread critical message makes the count wiggle.
             if (hot && shownUnread > 0) badge.style.rotate = new Rotate(Mathf.Sin(t * 9f) * 9f - 6f);
             // Critical bubbles give a little shake every couple of seconds.

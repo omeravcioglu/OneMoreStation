@@ -206,11 +206,11 @@ namespace Metro.UI
             bool isRush = per == DayPeriod.MorningRush || per == DayPeriod.EveningRush;
             period.EnableInClassList("period-rush", isRush);
             UIK.Show(rush, isRush);
-            if (isRush) rush.style.rotate = new Rotate(12f + Mathf.Sin(Time.unscaledTime * 3f) * 5f);
+            if (isRush) rush.style.rotate = new Rotate(12f + Mathf.Sin(UIClock.Now * 3f) * 5f);
             dayBar.SetTime(c.MinuteOfDay, c.IsWeekend);
 
             UIK.Show(pausedChip, g.Paused);
-            if (g.Paused) pausedChip.style.rotate = new Rotate(Mathf.Sin(Time.unscaledTime * 4f) * 4f - 6f);
+            if (g.Paused) pausedChip.style.rotate = new Rotate(Mathf.Sin(UIClock.Now * 4f) * 4f - 6f);
             int speed = g.Paused ? 0 : g.SpeedIndex + 1;
             if (speed != shownSpeed)
             {
@@ -241,7 +241,7 @@ namespace Metro.UI
             UIK.Show(grumpyRing, grumpy);
             if (grumpy)
             {
-                float k = 1f + 0.035f * Mathf.Sin(Time.unscaledTime * 4f);
+                float k = 1f + 0.035f * Mathf.Sin(UIClock.Now * 4f);
                 grumpyRing.style.scale = new Scale(new Vector3(k, k, 1f));
             }
             if (satIcon != null)
@@ -502,7 +502,7 @@ namespace Metro.UI
             // No lines yet: the New line button gets big and wiggly.
             UIK.Show(empty, n == 0 && !drawing);
             add.EnableInClassList("btn-primary", n == 0);
-            add.style.rotate = n == 0 ? new Rotate(Mathf.Sin(Time.unscaledTime * 3f) * 3f) : new Rotate(0f);
+            add.style.rotate = n == 0 ? new Rotate(Mathf.Sin(UIClock.Now * 3f) * 3f) : new Rotate(0f);
             var sb = new StringBuilder();
             foreach (var l in gs.net.AliveLines()) sb.Append(l.id).Append(':').Append(l.colorIndex).Append(',');
             string sig = sb.ToString();
@@ -720,7 +720,7 @@ namespace Metro.UI
                 UIK.Show(skipStrip, skipping);
                 if (skipping)
                 {
-                    skipClock.style.rotate = new Rotate(Time.unscaledTime * 540f % 360f);
+                    skipClock.style.rotate = new Rotate(UIClock.Now * 540f % 360f);
                     skipTime.text = "Skipping to dawn… " + gs.clock.TimeString;
                 }
             }

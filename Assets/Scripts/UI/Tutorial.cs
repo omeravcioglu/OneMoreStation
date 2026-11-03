@@ -130,7 +130,7 @@ namespace Metro.UI
 
         public void Tick(float dt)
         {
-            float t = Time.unscaledTime;
+            float t = UIClock.Now;
             if (UIK.Shown(root)) mascot.style.translate = new Translate(0f, -Mathf.Abs(Mathf.Sin(t * 2.4f)) * 5f);
             bool show = highlighted != null && highlighted.panel != null && UIK.Shown(highlighted) && highlighted.worldBound.width > 1f;
             UIK.Show(ring, show);

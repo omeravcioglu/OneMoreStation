@@ -696,6 +696,7 @@ namespace Metro
         void Update()
         {
             InputX.BeginFrame();
+            UIClock.Tick();
             float dt = FrameDt;
             chimeCooldown -= dt;
             TickPlatform(dt);

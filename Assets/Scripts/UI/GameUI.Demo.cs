@@ -85,7 +85,7 @@ namespace Metro.UI
             p.Add(burst);
             jump.schedule.Execute(() =>
             {
-                float t = Time.unscaledTime;
+                float t = UIClock.Now;
                 jump.style.translate = new Translate(0f, -Mathf.Abs(Mathf.Sin(t * 3.2f)) * 16f);
                 jump.Wave = Mathf.Sin(t * 6f) * 18f;
                 burst.style.rotate = new Rotate(12f + Mathf.Sin(t * 2.2f) * 4f);

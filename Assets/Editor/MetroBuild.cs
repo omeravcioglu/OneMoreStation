@@ -46,7 +46,7 @@ namespace Metro.EditorTools
             EnsureSceneInBuildSettings();
             // The window title and the data folder (AppData/LocalLow/<company>/<product>) follow these names.
             PlayerSettings.productName = "One More Station";
-            PlayerSettings.companyName = "Metro";
+            PlayerSettings.companyName = "McHunter Studio";
             PlayerSettings.bundleVersion = Version;
             PlayerSettings.resizableWindow = true;
             PlayerSettings.fullScreenMode = FullScreenMode.FullScreenWindow;

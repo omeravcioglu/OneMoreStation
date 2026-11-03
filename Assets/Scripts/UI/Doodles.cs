@@ -568,7 +568,7 @@ namespace Metro.UI
             var text = UIK.Text(this, "PAUSED", "pause-sign-text");
             text.pickingMode = PickingMode.Ignore;
             UIK.Display(text);
-            schedule.Execute(() => style.rotate = new Rotate(Mathf.Sin(Time.unscaledTime * 2.1f) * 2.5f)).Every(16);
+            schedule.Execute(() => style.rotate = new Rotate(Mathf.Sin(UIClock.Now * 2.1f) * 2.5f)).Every(16);
         }
 
         void Draw(MeshGenerationContext mgc)
@@ -747,7 +747,7 @@ namespace Metro.UI
             generateVisualContent += Draw;
             schedule.Execute(() =>
             {
-                spark = Mathf.Floor(Time.unscaledTime * 4f) % 2f;
+                spark = Mathf.Floor(UIClock.Now * 4f) % 2f;
                 MarkDirtyRepaint();
             }).Every(120);
         }
